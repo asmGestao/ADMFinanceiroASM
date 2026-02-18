@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASM Gestão Clínica - Apresentação</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            color: #264653;
+            line-height: 1.6;
+            background: #f5f5f5;
+        }
+        
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto 20px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Header/Footer padrão */
+        .header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(135deg, #264653 0%, #2a9d8f 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            color: white;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+        
+        .footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #264653;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 10px;
+            text-align: center;
+            padding: 0 40px;
+        }
+        
+        .content {
+            padding: 100px 50px 80px;
+        }
+        
+        /* Página 1 - Capa */
+        .cover {
+            background: linear-gradient(135deg, #264653 0%, #2a9d8f 100%);
+            min-height: 297mm;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            position: relative;
+        }
+        
+        .cover::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 50%;
+        }
+        
+        .cover::after {
+            content: '';
+            position: absolute;
+            bottom: -150px;
+            left: -100px;
+            width: 500px;
+            height: 500px;
+            background: rgba(212, 175, 55, 0.05);
+            border-radius: 50%;
+        }
+        
+        .cover-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 80px 40px 40px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .logo-icon {
+            width: 100px;
+            height: 100px;
+            background: rgba(212, 175, 55, 0.2);
+            border: 3px solid #d4af37;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            font-size: 50px;
+        }
+        
+        .cover h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 44px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        
+        .cover .subtitle {
+            font-size: 18px;
+            font-weight: 300;
+            margin-bottom: 50px;
+            opacity: 0.9;
+        }
+        
+        .cover .tagline {
+            background: rgba(212, 175, 55, 0.2);
+            border: 2px solid #d4af37;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 15px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #d4af37;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .cover-footer {
+            padding: 20px 40px 30px;
+            text-align: center;
+            font-size: 11px;
+            opacity: 0.7;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Seções numeradas */
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #d4af37;
+        }
+        
+        .section-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: #d4af37;
+            margin-right: 20px;
+            line-height: 1;
+        }
+        
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: #264653;
+            font-weight: 600;
+        }
+        
+        /* Cards de funcionalidades */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin: 30px 0;
+        }
+        
+        .feature-card {
+            background: #f8f9fa;
+            border-left: 4px solid #d4af37;
+            padding: 25px;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .feature-card h3 {
+            font-size: 16px;
+            color: #264653;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .feature-card p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .icon {
+            width: 30px;
+            height: 30px;
+            background: #264653;
+            color: #d4af37;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        /* Lista de itens */
+        .item-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+        
+        .item-list li {
+            padding: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        
+        .item-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #d4af37;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        /* Módulos */
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .module-item {
+            background: linear-gradient(135deg, #264653 0%, #2a9d8f 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .module-item::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 60px;
+            height: 60px;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 50%;
+        }
+        
+        .module-num {
+            font-size: 36px;
+            font-weight: 700;
+            color: #d4af37;
+            opacity: 0.5;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+        
+        .module-item h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .module-item p {
+            font-size: 12px;
+            opacity: 0.9;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Benefícios ícones */
+        .benefits-row {
+            display: flex;
+            justify-content: space-around;
+            margin: 40px 0;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .benefit-item {
+            text-align: center;
+            max-width: 150px;
+        }
+        
+        .benefit-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #d4af37 0%, #c19b2e 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 32px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        
+        .benefit-item h4 {
+            font-size: 13px;
+            color: #264653;
+            font-weight: 600;
+        }
+        
+        /* Página preço */
+        .price-page {
+            background: linear-gradient(135deg, #264653 0%, #2a9d8f 100%);
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 297mm;
+            padding: 60px 40px;
+        }
+        
+        .price-tag {
+            font-family: 'Playfair Display', serif;
+            font-size: 72px;
+            font-weight: 700;
+            color: #d4af37;
+            margin: 20px 0;
+        }
+        
+        .price-features {
+            background: rgba(255,255,255,0.1);
+            padding: 30px 50px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: left;
+            backdrop-filter: blur(10px);
+        }
+        
+        .price-features li {
+            list-style: none;
+            padding: 10px 0;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .price-features li::before {
+            content: '✓';
+            color: #d4af37;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        
+        .cta-button {
+            background: #d4af37;
+            color: #264653;
+            padding: 20px 50px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 18px;
+            margin: 20px 0;
+            display: inline-block;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .link-box {
+            background: rgba(255,255,255,0.15);
+            border: 2px dashed #d4af37;
+            padding: 20px 40px;
+            border-radius: 10px;
+            margin-top: 20px;
+            max-width: 500px;
+        }
+        
+        .link-box p {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .link-placeholder {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #d4af37;
+            word-break: break-all;
+        }
+        
+        /* Print */
+        @media print {
+            body { background: white; }
+            .page { 
+                box-shadow: none; 
+                margin: 0; 
+                page-break-after: always;
+            }
+            .page:last-child { page-break-after: auto; }
+        }
+        
+        @media screen {
+            .page { margin-bottom: 40px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PÁGINA 1 - CAPA -->
+    <div class="page">
+        <div class="cover">
+            <div class="cover-main">
+                <div class="logo-icon">🏥</div>
+                <h1>ASM GESTÃO CLÍNICA</h1>
+                <p class="subtitle">Sistema Completo para Fisioterapeutas</p>
+                <div class="tagline">Gestão Profissional na Palma da Mão</div>
+            </div>
+            <div class="cover-footer">
+                © 2025 Dra. Andresa Augusto - Todos os direitos reservados<br>
+                Proibida a reprodução sem autorização
+            </div>
+        </div>
+    </div>
+
+    <!-- PÁGINA 2 - VISÃO GERAL -->
+    <div class="page">
+        <div class="header">ASM Gestão Clínica ©2025 Dra. Andresa Augusto</div>
+        <div class="content">
+            <div class="section-header">
+                <div class="section-num">01</div>
+                <div class="section-title">VISÃO GERAL</div>
+            </div>
+            
+            <h2 style="font-family: 'Playfair Display', serif; color: #264653; margin-bottom: 20px; font-size: 24px;">O que é o ASM Gestão Clínica?</h2>
+            
+            <div style="background: #f8f9fa; padding: 25px; border-radius: 10px; margin-bottom: 30px; border-left: 4px solid #d4af37;">
+                <h3 style="color: #d4af37; margin-bottom: 15px; font-size: 16px;">Conceito</h3>
+                <p style="font-size: 14px; line-height: 1.8; color: #555;">
+                    O ASM Gestão Clínica é um sistema <strong>completo e profissional</strong> desenvolvido exclusivamente para fisioterapeutas e profissionais da saúde que desejam organizar sua clínica de forma eficiente, moderna e integrada.
+                </p>
+                <p style="font-size: 14px; line-height: 1.8; color: #555; margin-top: 15px;">
+                    Desenvolvido com tecnologia de ponta, o sistema funciona <strong>100% no navegador</strong>, sem necessidade de instalação, com múltiplos logins de acesso e todos os dados armazenados de forma segura.
+                </p>
+            </div>
+            
+            <h3 style="color: #264653; margin-bottom: 20px; font-size: 18px;">Diferenciais do Sistema</h3>
+            <ul class="item-list">
+                <li>Sistema multiusuário com controle de acesso individual</li>
+                <li>Sem necessidade de instalação ou atualizações manuais</li>
+                <li>Integração total com WhatsApp para cobranças e comunicação</li>
+                <li>Geração de PDFs profissionais e relatórios gerenciais</li>
+                <li>Design exclusivo azul marinho e dourado</li>
+                <li>Privacidade garantida com dados protegidos</li>
+                <li>Controle financeiro completo: entradas, saídas e fluxo de caixa</li>
+            </ul>
+        </div>
+        <div class="footer">Gestão Profissional na Palma da Mão ©2025 Dra. Andresa Augusto - Proibida a reprodução sem autorização</div>
+    </div>
+
+    <!-- PÁGINA 3 - MÓDULOS -->
+    <div class="page">
+        <div class="header">ASM Gestão Clínica ©2025 Dra. Andresa Augusto</div>
+        <div class="content">
+            <div class="section-header">
+                <div class="section-num">02</div>
+                <div class="section-title">MÓDULOS</div>
+            </div>
+            
+            <h2 style="font-family: 'Playfair Display', serif; color: #264653; margin-bottom: 30px; font-size: 24px;">Módulos Principais do Sistema</h2>
+            
+            <div class="module-grid">
+                <div class="module-item">
+                    <div class="module-num">01</div>
+                    <h3>🔐 Configurações do Sistema</h3>
+                    <p>Cadastro do profissional, CREFITO, nome da clínica, chave PIX e personalização completa. Dados integrados em todos os documentos.</p>
+                </div>
+                
+                <div class="module-item">
+                    <div class="module-num">02</div>
+                    <h3>📅 Agenda de Atendimentos</h3>
+                    <p>Calendário visual intuitivo com navegação mensal. Cadastro de agendamentos por tipo (Normal, Laser, Avaliação) com valores e observações.</p>
+                </div>
+                
+                <div class="module-item">
+                    <div class="module-num">03</div>
+                    <h3>👥 Cadastro de Pacientes</h3>
+                    <p>Ficha completa com dados pessoais, valor padrão da sessão e queixa principal. Busca rápida em cards visuais.</p>
+                </div>
+                
+                <div class="module-item">
+                    <div class="module-num">04</div>
+                    <h3>💰 Controle Financeiro</h3>
+                    <p>Resumo visual Pago vs Pendente. Seleção múltipla para cobrança. Marcação rápida de pagamento com atualização automática.</p>
+                </div>
+                
+                <div class="module-item">
+                    <div class="module-num">05</div>
+                    <h3>📝 Prontuário e Evoluções</h3>
+                    <p>Registro clínico com data/hora automáticas. Envio de evoluções via WhatsApp. Histórico completo organizado cronologicamente.</p>
+                </div>
+                
+                <div class="module-item">
+                    <div class="module-num">06</div>
+                    <h3>📊 Fluxo de Caixa</h3>
+                    <p>Controle de entradas (atendimentos) e saídas (despesas). Categorização por tipo e cálculo automático de saldo em tempo real.</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer">ASM Gestão Clínica ©2025 Dra. Andresa Augusto</div>
+    </div>
+
+    <!-- PÁGINA 4 - FUNCIONALIDADES -->
+    <div class="page">
+        <div class="header">ASM Gestão Clínica ©2025 Dra. Andresa Augusto</div>
+        <div class="content">
+            <div class="section-header">
+                <div class="section-num">03</div>
+                <div class="section-title">FUNCIONALIDADES</div>
+            </div>
+            
+            <h2 style="font-family: 'Playfair Display', serif; color: #264653; margin-bottom: 30px; font-size: 24px;">Gestão Financeira e Clínica</h2>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3><span class="icon">💳</span> Cobrança Automatizada via WhatsApp</h3>
+                    <p>Mensagem personalizada com lista de sessões pendentes, valor total e chave PIX para pagamento instantâneo.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3><span class="icon">📋</span> Confirmação de Agendamentos</h3>
+                    <p>Envio automático de mensagem de confirmação com dados do agendamento e informações da clínica.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3><span class="icon">📄</span> Relatórios Profissionais em PDF</h3>
+                    <p>Design exclusivo navy blue e dourado. Relatórios mensais por paciente e gerencial da clínica completos.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3><span class="icon">📤</span> Exportação de Dados</h3>
+                    <p>Exportação para Excel (CSV) de dados financeiros para importação em sistemas contábeis.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3><span class="icon">🔄</span> Gestão de Cancelamentos</h3>
+                    <p>Cancelamento sem exclusão, mantendo histórico completo com visualização diferenciada no sistema.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3><span class="icon">📱</span> Integração WhatsApp Total</h3>
+                    <p>Confirmações, lembretes, cobranças com PIX, envio de evoluções e relatórios mensais em texto.</p>
+                </div>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #264653 0%, #2a9d8f 100%); color: white; padding: 30px; border-radius: 15px; margin-top: 30px; text-align: center;">
+                <h3 style="font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 15px; color: #d4af37;">Multiusuário Seguro</h3>
+                <p style="font-size: 14px; opacity: 0.9;">Sistema de login individual para profissionais com controle de acesso e permissões. Cada usuário tem seu próprio acesso seguro.</p>
+            </div>
+        </div>
+        <div class="footer">ASM Gestão Clínica ©2025 Dra. Andresa Augusto</div>
+    </div>
+
+    <!-- PÁGINA 5 - TECNOLOGIA -->
+    <div class="page">
+        <div class="header">ASM Gestão Clínica ©2025 Dra. Andresa Augusto</div>
+        <div class="content">
+            <div class="section-header">
+                <div class="section-num">04</div>
+                <div class="section-title">TECNOLOGIA</div>
+            </div>
+            
+            <h2 style="font-family: 'Playfair Display', serif; color: #264653; margin-bottom: 30px; font-size: 24px;">Segurança e Vantagens</h2>
+            
+            <div style="background: #f8f9fa; padding: 25px; border-radius: 10px; margin-bottom: 30px; border-left: 4px solid #d4af37;">
+                <h3 style="color: #264653; margin-bottom: 20px; font-size: 18px;">🔒 Segurança e Privacidade</h3>
+                <ul class="item-list">
+                    <li>Dados armazenados com segurança e criptografia</li>
+                    <li>Sistema de login protegido por senha individual</li>
+                    <li>Privacidade garantida - conformidade com LGPD</li>
+                    <li>Controle de acesso por nível de usuário</li>
+                    <li>Sem compartilhamento de dados entre clínicas</li>
+                </ul>
+            </div>
+            
+            <h3 style="color: #264653; margin-bottom: 25px; font-size: 18px;">Vantagens Exclusivas</h3>
+            
+            <div class="benefits-row">
+                <div class="benefit-item">
+                    <div class="benefit-icon">💎</div>
+                    <h4>Acesso Vitalício</h4>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">⚡</div>
+                    <h4>Rápido e Leve</h4>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">📱</div>
+                    <h4>Multiplataforma</h4>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">🔄</div>
+                    <h4>Atualizações Automáticas</h4>
+                </div>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 2px solid #d4af37; padding: 25px; border-radius: 10px; margin-top: 20px;">
+                <h3 style="color: #856404; margin-bottom: 15px; font-size: 16px;">✨ Ideal Para:</h3>
+                <p style="font-size: 14px; color: #856404; line-height: 1.8;">
+                    Fisioterapeutas autônomos • Clínicas de fisioterapia • Profissionais da saúde em geral • Consultórios individuais • Clínicas multidisciplinares • Profissionais que valorizam tecnologia e praticidade
+                </p>
+            </div>
+        </div>
+        <div class="footer">ASM Gestão Clínica ©2025 Dra. Andresa Augusto</div>
+    </div>
+
+    <!-- PÁGINA 6 - PREÇO E COMPRA -->
+    <div class="page">
+        <div class="price-page">
+            <div class="logo-icon" style="margin-bottom: 20px; width: 80px; height: 80px; font-size: 40px;">🏥</div>
+            <h1 style="font-family: 'Playfair Display', serif; font-size: 32px; margin-bottom: 10px;">ASM Gestão Clínica</h1>
+            <p style="font-size: 16px; opacity: 0.9; margin-bottom: 20px;">A solução completa para gestão da sua clínica</p>
+            
+            <div class="price-tag">R$ 497,00</div>
+            <p style="font-size: 14px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.8;">Investimento Único</p>
+            
+            <ul class="price-features">
+                <li>Sistema completo com todos os módulos</li>
+                <li>Licença para 1 clínica (até 3 usuários)</li>
+                <li>Integração WhatsApp completa</li>
+                <li>Relatórios PDF profissionais</li>
+                <li>Treinamento de implantação incluso</li>
+            </ul>
+            
+            <div class="link-box">
+                <p>🔗 Link para Compra</p>
+                <div class="link-placeholder">https://seu-link-de-venda-aqui.com</div>
+            </div>
+            
+            <a href="#" class="cta-button">COMPRE AGORA →</a>
+            
+            <div style="margin-top: 40px; font-size: 11px; opacity: 0.6;">
+                © 2025 Dra. Andresa Augusto - Todos os direitos reservados<br>
+                Proibida a reprodução total ou parcial sem autorização expressa<br>
+                Desenvolvido exclusivamente para uso profissional autorizado
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
