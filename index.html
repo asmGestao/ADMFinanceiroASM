@@ -495,7 +495,7 @@
     </div>
 
     <script>
-        // Firebase Config
+        // Firebase Config - ASM Financeiro Pro
         const firebaseConfig = {
             apiKey: "AIzaSyCcVS9BVbZjogyUQ9vvYExPNqyDwKy9TcQ",
             authDomain: "asm-financeiro-pro.firebaseapp.com",
@@ -516,13 +516,18 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            app = firebase.initializeApp(firebaseConfig);
-            database = firebase.database();
+            try {
+                app = firebase.initializeApp(firebaseConfig);
+                database = firebase.database();
+                console.log('Firebase inicializado com sucesso');
+            } catch (error) {
+                console.error('Erro ao inicializar Firebase:', error);
+            }
         });
 
         function login() {
-            const user = document.getElementById('adminUser').value;
-            const pass = document.getElementById('adminPass').value;
+            const user = document.getElementById('adminUser').value.trim();
+            const pass = document.getElementById('adminPass').value.trim();
 
             if (user === ADMIN_USER && pass === ADMIN_PASS) {
                 document.getElementById('loginScreen').style.display = 'none';
@@ -542,24 +547,30 @@
 
         async function loadCodes() {
             try {
+                console.log('Carregando códigos do Firebase...');
                 const snapshot = await database.ref('activationCodesFinancas').once('value');
                 const data = snapshot.val();
+                
+                console.log('Dados recebidos:', data);
                 
                 if (!data) {
                     document.getElementById('codesList').innerHTML = `
                         <div class="empty-state">
                             <i class="fas fa-inbox"></i>
-                            <p>Nenhum código encontrado</p>
+                            <p>Nenhum código encontrado no Firebase</p>
                         </div>
                     `;
                     return;
                 }
 
+                // Converter objeto em array
                 allCodes = Object.entries(data).map(([key, value]) => ({
                     code: key,
                     ...value
                 }));
 
+                console.log(`Total de códigos carregados: ${allCodes.length}`);
+                
                 updateStats();
                 renderCodes();
 
@@ -568,7 +579,7 @@
                 document.getElementById('codesList').innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-exclamation-triangle"></i>
-                        <p>Erro ao carregar dados. Tente novamente.</p>
+                        <p>Erro ao carregar dados: ${error.message}</p>
                     </div>
                 `;
             }
@@ -576,35 +587,35 @@
 
         function updateStats() {
             const total = allCodes.length;
-            const used = allCodes.filter(c => c.used).length;
+            const used = allCodes.filter(c => c.used === true).length;
             const available = total - used;
 
-            document.getElementById('totalCodes').textContent = total;
-            document.getElementById('availableCodes').textContent = available;
-            document.getElementById('usedCodes').textContent = used;
+            document.getElementById('totalCodes').textContent = total.toLocaleString('pt-BR');
+            document.getElementById('availableCodes').textContent = available.toLocaleString('pt-BR');
+            document.getElementById('usedCodes').textContent = used.toLocaleString('pt-BR');
         }
 
         function renderCodes() {
             const list = document.getElementById('codesList');
-            let filtered = allCodes;
+            let filtered = [...allCodes];
 
             // Apply filter
             if (currentFilter === 'available') {
-                filtered = allCodes.filter(c => !c.used);
+                filtered = allCodes.filter(c => c.used !== true);
             } else if (currentFilter === 'used') {
-                filtered = allCodes.filter(c => c.used);
+                filtered = allCodes.filter(c => c.used === true);
             }
 
             // Apply search
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
             if (searchTerm) {
                 filtered = filtered.filter(c => {
-                    const matchCode = c.code.toLowerCase().includes(searchTerm);
+                    const matchCode = c.code && c.code.toLowerCase().includes(searchTerm);
                     const matchUser = c.userData && (
-                        c.userData.name?.toLowerCase().includes(searchTerm) ||
-                        c.userData.email?.toLowerCase().includes(searchTerm) ||
-                        c.userData.cpf?.includes(searchTerm) ||
-                        c.userData.whatsapp?.includes(searchTerm)
+                        (c.userData.name && c.userData.name.toLowerCase().includes(searchTerm)) ||
+                        (c.userData.email && c.userData.email.toLowerCase().includes(searchTerm)) ||
+                        (c.userData.cpf && c.userData.cpf.includes(searchTerm)) ||
+                        (c.userData.whatsapp && c.userData.whatsapp.includes(searchTerm))
                     );
                     return matchCode || matchUser;
                 });
@@ -614,20 +625,45 @@
                 list.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-search"></i>
-                        <p>Nenhum código encontrado</p>
+                        <p>Nenhum código encontrado com os filtros atuais</p>
                     </div>
                 `;
                 return;
             }
 
-            list.innerHTML = filtered.map(code => {
-                const isUsed = code.used;
+            // Renderizar apenas os primeiros 100 para performance, com botão "Carregar mais" se necessário
+            const codesToRender = filtered.slice(0, 200);
+            const hasMore = filtered.length > 200;
+
+            let html = codesToRender.map(code => {
+                const isUsed = code.used === true;
                 const userData = code.userData || {};
-                const activatedAt = code.activatedAt ? new Date(code.activatedAt * 1000).toLocaleDateString('pt-BR') : '-';
+                
+                // Formatar data de ativação
+                let activatedAt = '-';
+                if (code.activatedAt) {
+                    try {
+                        const date = new Date(code.activatedAt * 1000);
+                        activatedAt = date.toLocaleDateString('pt-BR');
+                    } catch (e) {
+                        activatedAt = '-';
+                    }
+                }
+
+                // Formatar data de criação
+                let createdAt = '-';
+                if (code.createdAt) {
+                    try {
+                        const date = new Date(code.createdAt * 1000);
+                        createdAt = date.toLocaleDateString('pt-BR');
+                    } catch (e) {
+                        createdAt = '-';
+                    }
+                }
 
                 return `
                     <div class="code-row ${isUsed ? 'used' : ''}">
-                        <div class="code-text">${code.code}</div>
+                        <div class="code-text">${code.code || 'N/A'}</div>
                         <div>
                             <span class="status-badge ${isUsed ? 'used' : 'available'}">
                                 ${isUsed ? '✓ USADO' : 'DISPONÍVEL'}
@@ -635,11 +671,11 @@
                         </div>
                         <div class="user-info">
                             ${isUsed ? `
-                                <div class="name">${userData.name || 'N/A'}</div>
+                                <div class="name">${userData.name || 'Nome não informado'}</div>
                                 <div style="color: #888; font-size: 12px;">
                                     CPF: ${userData.cpf || 'N/A'} | Ativado: ${activatedAt}
                                 </div>
-                            ` : '<span style="color: #999;">Aguardando ativação...</span>'}
+                            ` : `<span style="color: #999;">Criado: ${createdAt}</span>`}
                         </div>
                         <div class="contact-info">
                             ${isUsed ? `
@@ -660,6 +696,112 @@
                     </div>
                 `;
             }).join('');
+
+            if (hasMore) {
+                html += `
+                    <div style="padding: 20px; text-align: center; background: #f8f9fa;">
+                        <p style="color: #666; margin-bottom: 10px;">
+                            Mostrando 200 de ${filtered.length.toLocaleString('pt-BR')} códigos
+                        </p>
+                        <button onclick="renderAllCodes()" style="padding: 10px 20px; background: #1a237e; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            Mostrar Todos
+                        </button>
+                    </div>
+                `;
+            }
+
+            list.innerHTML = html;
+        }
+
+        function renderAllCodes() {
+            // Renderizar todos sem limite
+            const list = document.getElementById('codesList');
+            let filtered = [...allCodes];
+
+            if (currentFilter === 'available') {
+                filtered = allCodes.filter(c => c.used !== true);
+            } else if (currentFilter === 'used') {
+                filtered = allCodes.filter(c => c.used === true);
+            }
+
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (searchTerm) {
+                filtered = filtered.filter(c => {
+                    const matchCode = c.code && c.code.toLowerCase().includes(searchTerm);
+                    const matchUser = c.userData && (
+                        (c.userData.name && c.userData.name.toLowerCase().includes(searchTerm)) ||
+                        (c.userData.email && c.userData.email.toLowerCase().includes(searchTerm)) ||
+                        (c.userData.cpf && c.userData.cpf.includes(searchTerm)) ||
+                        (c.userData.whatsapp && c.userData.whatsapp.includes(searchTerm))
+                    );
+                    return matchCode || matchUser;
+                });
+            }
+
+            const html = filtered.map(code => {
+                const isUsed = code.used === true;
+                const userData = code.userData || {};
+                
+                let activatedAt = '-';
+                if (code.activatedAt) {
+                    try {
+                        const date = new Date(code.activatedAt * 1000);
+                        activatedAt = date.toLocaleDateString('pt-BR');
+                    } catch (e) {
+                        activatedAt = '-';
+                    }
+                }
+
+                let createdAt = '-';
+                if (code.createdAt) {
+                    try {
+                        const date = new Date(code.createdAt * 1000);
+                        createdAt = date.toLocaleDateString('pt-BR');
+                    } catch (e) {
+                        createdAt = '-';
+                    }
+                }
+
+                return `
+                    <div class="code-row ${isUsed ? 'used' : ''}">
+                        <div class="code-text">${code.code || 'N/A'}</div>
+                        <div>
+                            <span class="status-badge ${isUsed ? 'used' : 'available'}">
+                                ${isUsed ? '✓ USADO' : 'DISPONÍVEL'}
+                            </span>
+                        </div>
+                        <div class="user-info">
+                            ${isUsed ? `
+                                <div class="name">${userData.name || 'Nome não informado'}</div>
+                                <div style="color: #888; font-size: 12px;">
+                                    CPF: ${userData.cpf || 'N/A'} | Ativado: ${activatedAt}
+                                </div>
+                            ` : `<span style="color: #999;">Criado: ${createdAt}</span>`}
+                        </div>
+                        <div class="contact-info">
+                            ${isUsed ? `
+                                <div><i class="fas fa-envelope"></i> ${userData.email || 'N/A'}</div>
+                                <div><i class="fas fa-phone"></i> ${userData.whatsapp || 'N/A'}</div>
+                            ` : '-'}
+                        </div>
+                        <div class="actions">
+                            <button class="action-btn copy" onclick="copyCode('${code.code}')">
+                                <i class="fas fa-copy"></i> Copiar
+                            </button>
+                            ${isUsed && userData.whatsapp ? `
+                                <button class="action-btn whatsapp" onclick="openWhatsApp('${userData.whatsapp}')">
+                                    <i class="fab fa-whatsapp"></i> WhatsApp
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            list.innerHTML = html;
+            
+            // Scroll suave para mostrar que carregou mais
+            showToast(`${filtered.length.toLocaleString('pt-BR')} códigos carregados!`);
         }
 
         function filterCodes(type) {
@@ -679,13 +821,29 @@
         }
 
         function copyCode(code) {
+            if (!code) return;
             navigator.clipboard.writeText(code).then(() => {
+                showToast(`Código ${code} copiado!`);
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+                // Fallback para dispositivos móveis
+                const textArea = document.createElement('textarea');
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
                 showToast(`Código ${code} copiado!`);
             });
         }
 
         function openWhatsApp(whatsapp) {
+            if (!whatsapp) return;
             const number = whatsapp.replace(/\D/g, '');
+            if (number.length < 10) {
+                showToast('Número de WhatsApp inválido');
+                return;
+            }
             window.open(`https://wa.me/55${number}`, '_blank');
         }
 
@@ -701,6 +859,13 @@
         // Enter key on login
         document.getElementById('adminPass').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') login();
+        });
+        
+        // Enter key on user
+        document.getElementById('adminUser').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('adminPass').focus();
+            }
         });
     </script>
 </body>
